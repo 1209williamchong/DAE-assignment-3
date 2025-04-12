@@ -17,14 +17,14 @@
         }
         .video-container iframe {
             width: 100%;
-            max-width: 343px; /* 375 - 16px * 2 邊距 */
-            height: 180px; /* 16:9 比例，343 * 9/16 ≈ 180 */
+            max-width: 343px;
+            height: 150px;
             border: none;
         }
         .software-item {
             border: 1px solid #ccc;
-            margin-bottom: 12px;
-            padding: 12px;
+            margin-bottom: 8px;
+            padding: 8px;
             border-radius: 5px;
             animation: fadeIn 0.3s ease-in;
         }
@@ -34,9 +34,9 @@
             margin-bottom: 8px;
         }
         .software-icon {
-            width: 60px;
-            height: 60px;
-            margin-right: 12px;
+            width: 48px;
+            height: 48px;
+            margin-right: 8px;
             border-radius: 5px;
             object-fit: contain;
         }
@@ -44,11 +44,11 @@
             flex-grow: 1;
         }
         .software-details h2 {
-            font-size: 18px;
+            font-size: 15px;
             margin-bottom: 4px;
         }
         .software-details p {
-            font-size: 14px;
+            font-size: 12px;
             line-height: 1.4;
             margin-bottom: 4px;
         }
@@ -59,13 +59,13 @@
         .category-tag {
             color: var(--ion-color-primary);
             cursor: pointer;
-            padding: 4px 8px;
+            padding: 2px 5px;
             border-radius: 12px;
-            font-size: 14px;
-            transition: background-color 0.2s;
+            font-size: 12px;
             display: inline-block;
-            min-width: 44px; /* 確保觸控目標大小 */
+            min-width: 44px;
             text-align: center;
+            transition: background-color 0.2s;
         }
         .category-tag.selected {
             background-color: var(--ion-color-primary);
@@ -81,7 +81,6 @@
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        /* 針對 375px 寬度優化 */
         @media (max-width: 375px) {
             ion-searchbar {
                 --padding-start: 8px;
@@ -94,32 +93,9 @@
             ion-datetime-button {
                 --padding-end: 8px;
             }
-            .software-item {
-                padding: 10px;
-                margin-bottom: 10px;
-            }
-            .software-icon {
-                width: 50px;
-                height: 50px;
-                margin-right: 10px;
-            }
-            .software-details h2 {
-                font-size: 16px;
-            }
-            .software-details p {
-                font-size: 13px;
-            }
-            .video-container iframe {
-                height: 160px; /* 進一步縮小，適配 375px */
-            }
-            .category-tag {
-                padding: 3px 6px;
-                font-size: 13px;
-            }
         }
-        /* 確保鍵盤彈出時內容可滾動 */
         ion-content {
-            --padding-bottom: 120px; /* 留空間給虛擬鍵盤 */
+            --padding-bottom: 120px;
         }
     </style>
 </head>
@@ -135,7 +111,7 @@
                     <ion-select-option value="name">名稱</ion-select-option>
                     <ion-select-option value="version">版本</ion-select-option>
                 </ion-select>
-                <ion-toggle id="sortDirection" slot="end" checked>降冪</ion-toggle>
+                <ion-toggle id="sortDirection" slot="end" checked>下降排序</ion-toggle>
             </ion-item>
             <ion-item>
                 <ion-select label="分類" interface="popover" id="categorySelect" multiple="true">
@@ -145,6 +121,11 @@
                     <ion-select-option value="辦公室軟體">辦公室軟體</ion-select-option>
                     <ion-select-option value="圖像編輯器">圖像編輯器</ion-select-option>
                     <ion-select-option value="版本控制">版本控制</ion-select-option>
+                    <ion-select-option value="程式設計工具">程式設計工具</ion-select-option>
+                    <ion-select-option value="資料庫">資料庫</ion-select-option>
+                    <ion-select-option value="媒體播放器">媒體播放器</ion-select-option>
+                    <ion-select-option value="檔案管理">檔案管理</ion-select-option>
+                    <ion-select-option value="網頁伺服器">網頁伺服器</ion-select-option>
                 </ion-select>
             </ion-item>
             <ion-item>
@@ -164,7 +145,7 @@
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Firefox_logo_2017.svg/800px-Firefox_logo_2017.svg.png" alt="Mozilla Firefox 圖示" class="software-icon">
                         <div class="software-details">
                             <h2>Mozilla Firefox</h2>
-                            <p><span class="detail-label">版本：</span>125.0.1 (截至 2025 年 4 月)</p>
+                            <p><span class="detail-label">版本：</span>125.0.1</p>
                             <p><span class="detail-label">授權條款：</span>Mozilla Public License 2.0</p>
                             <p><span class="detail-label">用途：</span><span class="category-tag">網頁瀏覽器</span></p>
                         </div>
@@ -178,7 +159,7 @@
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/800px-Tux.svg.png" alt="Linux (Ubuntu) 圖示" class="software-icon">
                         <div class="software-details">
                             <h2>Linux (Ubuntu)</h2>
-                            <p><span class="detail-label">版本：</span>24.04 LTS (截至 2025 年 4 月)</p>
+                            <p><span class="detail-label">版本：</span>24.04 LTS</p>
                             <p><span class="detail-label">授權條款：</span>GNU General Public License (GPL)</p>
                             <p><span class="detail-label">用途：</span><span class="category-tag">作業系統</span></p>
                         </div>
@@ -192,13 +173,13 @@
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/LibreOffice_logo.svg/800px-LibreOffice_logo.svg.png" alt="LibreOffice 圖示" class="software-icon">
                         <div class="software-details">
                             <h2>LibreOffice</h2>
-                            <p><span class="detail-label">版本：</span>24.2.3 (截至 2025 年 4 月)</p>
+                            <p><span class="detail-label">版本：</span>24.2.3</p>
                             <p><span class="detail-label">授權條款：</span>Mozilla Public License v2.0</p>
                             <p><span class="detail-label">用途：</span><span class="category-tag">辦公室軟體</span></p>
                         </div>
                     </div>
                     <div class="video-container">
-                        <iframe src="https://www.youtube.com/embed/nF0-612j61I" title="LibreOffice 7.6 示範影片" frameborder="0" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/nF0-612j61I" title="LibreOffice 示範影片" frameborder="0" allowfullscreen></iframe>
                     </div>
                 </div>
                 <div class="software-item" data-category="圖像編輯器" data-date="2025-02-20">
@@ -206,13 +187,13 @@
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/GIMP_logo.svg/800px-GIMP_logo.svg.png" alt="GIMP 圖示" class="software-icon">
                         <div class="software-details">
                             <h2>GIMP</h2>
-                            <p><span class="detail-label">版本：</span>2.10.36 (截至 2025 年 4 月)</p>
+                            <p><span class="detail-label">版本：</span>2.10.36</p>
                             <p><span class="detail-label">授權條款：</span>GNU General Public License v3.0</p>
                             <p><span class="detail-label">用途：</span><span class="category-tag">圖像編輯器</span></p>
                         </div>
                     </div>
                     <div class="video-container">
-                        <iframe src="https://www.youtube.com/embed/9ylj97R3R7s" title="GIMP 2.10 功能示範" frameborder="0" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/9ylj97R3R7s" title="GIMP 示範影片" frameborder="0" allowfullscreen></iframe>
                     </div>
                 </div>
                 <div class="software-item" data-category="版本控制" data-date="2025-04-05">
@@ -220,13 +201,223 @@
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Git-logo.svg/800px-Git-logo.svg.png" alt="Git 圖示" class="software-icon">
                         <div class="software-details">
                             <h2>Git</h2>
-                            <p><span class="detail-label">版本：</span>2.45.0 (截至 2025 年 4 月)</p>
+                            <p><span class="detail-label">版本：</span>2.45.0</p>
                             <p><span class="detail-label">授權條款：</span>GNU General Public License v2.0</p>
                             <p><span class="detail-label">用途：</span><span class="category-tag">版本控制</span></p>
                         </div>
                     </div>
                     <div class="video-container">
-                        <iframe src="https://www.youtube.com/embed/qw--VYLhZUE" title="Git 基礎示範" frameborder="0" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/qw--VYLhZUE" title="Git 示範影片" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="software-item" data-category="程式設計工具" data-date="2025-03-15">
+                    <div class="item-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/800px-Visual_Studio_Code_1.35_icon.svg.png" alt="VS Code 圖示" class="software-icon">
+                        <div class="software-details">
+                            <h2>Visual Studio Code</h2>
+                            <p><span class="detail-label">版本：</span>1.88.0</p>
+                            <p><span class="detail-label">授權條款：</span>MIT License</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">程式設計工具</span></p>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/KMxo3T_MTvY" title="VS Code 示範影片" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="software-item" data-category="資料庫" data-date="2025-01-10">
+                    <div class="item-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/5/5a/MySQL.svg/800px-MySQL.svg.png" alt="MySQL 圖示" class="software-icon">
+                        <div class="software-details">
+                            <h2>MySQL</h2>
+                            <p><span class="detail-label">版本：</span>8.4.0</p>
+                            <p><span class="detail-label">授權條款：</span>GNU General Public License v2.0</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">資料庫</span></p>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/OM4aZJW_Ojs" title="MySQL 示範影片" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="software-item" data-category="媒體播放器" data-date="2025-02-15">
+                    <div class="item-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/VLC_media_player_Logo.svg/800px-VLC_media_player_Logo.svg.png" alt="VLC 圖示" class="software-icon">
+                        <div class="software-details">
+                            <h2>VLC Media Player</h2>
+                            <p><span class="detail-label">版本：</span>3.0.21</p>
+                            <p><span class="detail-label">授權條款：</span>GNU General Public License v2.0</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">媒體播放器</span></p>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/FhX4F61KHDA" title="VLC 示範影片" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="software-item" data-category="圖像編輯器" data-date="2025-03-01">
+                    <div class="item-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Inkscape_logo.svg/800px-Inkscape_logo.svg.png" alt="Inkscape 圖示" class="software-icon">
+                        <div class="software-details">
+                            <h2>Inkscape</h2>
+                            <p><span class="detail-label">版本：</span>1.4.0</p>
+                            <p><span class="detail-label">授權條款：</span>GNU General Public License v3.0</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">圖像編輯器</span></p>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/7N0O4KH6ToU" title="Inkscape 示範影片" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="software-item" data-category="網頁伺服器" data-date="2025-04-10">
+                    <div class="item-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Apache_HTTP_server_logo_%282016%29.svg/800px-Apache_HTTP_server_logo_%282016%29.svg.png" alt="Apache 圖示" class="software-icon">
+                        <div class="software-details">
+                            <h2>Apache HTTP Server</h2>
+                            <p><span class="detail-label">版本：</span>2.4.62</p>
+                            <p><span class="detail-label">授權條款：</span>Apache License 2.0</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">網頁伺服器</span></p>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/9ylj97R3R7s" title="Apache 示範影片" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="software-item" data-category="程式設計工具" data-date="2025-02-10">
+                    <div class="item-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Logo_Eclipse.svg/800px-Logo_Eclipse.svg.png" alt="Eclipse 圖示" class="software-icon">
+                        <div class="software-details">
+                            <h2>Eclipse</h2>
+                            <p><span class="detail-label">版本：</span>4.31.0</p>
+                            <p><span class="detail-label">授權條款：</span>Eclipse Public License 2.0</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">程式設計工具</span></p>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/9ylj97R3R7s" title="Eclipse 示範影片" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="software-item" data-category="資料庫" data-date="2025-03-20">
+                    <div class="item-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/7/7c/PostgreSQL_logo.svg/800px-PostgreSQL_logo.svg.png" alt="PostgreSQL 圖示" class="software-icon">
+                        <div class="software-details">
+                            <h2>PostgreSQL</h2>
+                            <p><span class="detail-label">版本：</span>17.0</p>
+                            <p><span class="detail-label">授權條款：</span>PostgreSQL License</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">資料庫</span></p>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/9ylj97R3R7s" title="PostgreSQL 示範影片" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="software-item" data-category="檔案管理" data-date="2025-01-15">
+                    <div class="item-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/7-Zip_Logo.svg/800px-7-Zip_Logo.svg.png" alt="7-Zip 圖示" class="software-icon">
+                        <div class="software-details">
+                            <h2>7-Zip</h2>
+                            <p><span class="detail-label">版本：</span>24.03</p>
+                            <p><span class="detail-label">授權條款：</span>GNU Lesser General Public License</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">檔案管理</span></p>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/9ylj97R3R7s" title="7-Zip 示範影片" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="software-item" data-category="網頁瀏覽器" data-date="2025-04-03">
+                    <div class="item-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Chromium_Logo.svg/800px-Chromium_Logo.svg.png" alt="Chromium 圖示" class="software-icon">
+                        <div class="software-details">
+                            <h2>Chromium</h2>
+                            <p><span class="detail-label">版本：</span>124.0.6367.0</p>
+                            <p><span class="detail-label">授權條款：</span>BSD License</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">網頁瀏覽器</span></p>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/9ylj97R3R7s" title="Chromium 示範影片" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="software-item" data-category="作業系統" data-date="2025-02-25">
+                    <div class="item-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Debian_logo.svg/800px-Debian_logo.svg.png" alt="Debian 圖示" class="software-icon">
+                        <div class="software-details">
+                            <h2>Debian</h2>
+                            <p><span class="detail-label">版本：</span>12.5</p>
+                            <p><span class="detail-label">授權條款：</span>GNU General Public License</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">作業系統</span></p>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/9ylj97R3R7s" title="Debian 示範影片" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="software-item" data-category="程式設計工具" data-date="2025-04-12">
+                    <div class="item-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Node.js_logo.svg/800px-Node.js_logo.svg.png" alt="Node.js 圖示" class="software-icon">
+                        <div class="software-details">
+                            <h2>Node.js</h2>
+                            <p><span class="detail-label">版本：</span>22.0.0</p>
+                            <p><span class="detail-label">授權條款：</span>MIT License</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">程式設計工具</span></p>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/TlB_eWDSMt4" title="Node.js 示範影片" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="software-item" data-category="媒體播放器" data-date="2025-03-05">
+                    <div class="item-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Audacity_Logo.svg/800px-Audacity_Logo.svg.png" alt="Audacity 圖示" class="software-icon">
+                        <div class="software-details">
+                            <h2>Audacity</h2>
+                            <p><span class="detail-label">版本：</span>3.5.0</p>
+                            <p><span class="detail-label">授權條款：</span>GNU General Public License v2.0</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">媒體播放器</span></p>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/9ylj97R3R7s" title="Audacity 示範影片" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="software-item" data-category="檔案管理" data-date="2025-02-05">
+                    <div class="item-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/FileZilla_Logo.svg/800px-FileZilla_Logo.svg.png" alt="FileZilla 圖示" class="software-icon">
+                        <div class="software-details">
+                            <h2>FileZilla</h2>
+                            <p><span class="detail-label">版本：</span>3.67.0</p>
+                            <p><span class="detail-label">授權條款：</span>GNU General Public License v2.0</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">檔案管理</span></p>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/9ylj97R3R7s" title="FileZilla 示範影片" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="software-item" data-category="網頁伺服器" data-date="2025-01-20">
+                    <div class="item-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Nginx_logo.svg/800px-Nginx_logo.svg.png" alt="NGINX 圖示" class="software-icon">
+                        <div class="software-details">
+                            <h2>NGINX</h2>
+                            <p><span class="detail-label">版本：</span>1.26.0</p>
+                            <p><span class="detail-label">授權條款：</span>BSD License</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">網頁伺服器</span></p>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/9ylj97R3R7s" title="NGINX 示範影片" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="software-item" data-category="辦公室軟體" data-date="2025-04-08">
+                    <div class="item-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/OpenOffice_logo.svg/800px-OpenOffice_logo.svg.png" alt="OpenOffice 圖示" class="software-icon">
+                        <div class="software-details">
+                            <h2>Apache OpenOffice</h2>
+                            <p><span class="detail-label">版本：</span>4.1.16</p>
+                            <p><span class="detail-label">授權條款：</span>Apache License 2.0</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">辦公室軟體</span></p>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/9ylj97R3R7s" title="OpenOffice 示範影片" frameborder="0" allowfullscreen></iframe>
                     </div>
                 </div>
             </div>
@@ -246,7 +437,6 @@
 
             let activeTags = [];
 
-            // 解析版本號
             function parseVersion(str) {
                 const versionMatch = str.match(/[\d\.]+(?:\s*LTS)?/);
                 if (!versionMatch) return [0];
@@ -254,7 +444,6 @@
                 return version.split('.').map(Number);
             }
 
-            // 比較版本號
             function compareVersions(a, b) {
                 const aParts = parseVersion(a);
                 const bParts = parseVersion(b);
@@ -266,12 +455,10 @@
                 return 0;
             }
 
-            // 解析日期
             function parseDate(str) {
                 return str ? new Date(str) : null;
             }
 
-            // 應用過濾與排序
             function applyFilters() {
                 const searchTerm = searchInput.value.toLowerCase();
                 const selectedCategories = Array.isArray(categorySelect.value) ? categorySelect.value.filter(v => v !== '') : [];
@@ -295,7 +482,6 @@
                     return matchesSearch && matchesCategory && matchesTags && matchesDate;
                 });
 
-                // 排序
                 filtered.sort((a, b) => {
                     let aVal, bVal;
                     if (sortBy === 'name') {
@@ -312,7 +498,6 @@
 
                 if (isDescending) filtered.reverse();
 
-                // 更新 DOM
                 container.innerHTML = '';
                 if (filtered.length === 0) {
                     container.innerHTML = '<p class="no-results">無符合結果</p>';
@@ -321,7 +506,6 @@
                 }
             }
 
-            // 綁定事件
             searchInput.addEventListener('ionInput', applyFilters);
             categorySelect.addEventListener('ionChange', applyFilters);
             sortSelect.addEventListener('ionChange', applyFilters);
@@ -329,7 +513,6 @@
             startDateInput.addEventListener('ionChange', applyFilters);
             endDateInput.addEventListener('ionChange', applyFilters);
 
-            // 分類標籤點擊事件
             categoryTags.forEach(tag => {
                 tag.addEventListener('click', () => {
                     const category = tag.textContent;
@@ -344,7 +527,6 @@
                 });
             });
 
-            // 初始化
             applyFilters();
         });
     </script>
