@@ -67,20 +67,33 @@
     <ion-app>
         <ion-header>
             <ion-toolbar>
-                <ion-title>開源軟體清單</ion-title>
+              <ion-title>開源軟體清單</ion-title>
             </ion-toolbar>
-            <ion-searchbar placeholder="搜尋..."></ion-searchbar>
+          
+            <!-- 搜尋列 -->
+            <ion-searchbar id="searchInput" placeholder="搜尋..."></ion-searchbar>
+          
+            <!-- 🔽 新增：排序選單 -->
             <ion-item>
-                <ion-select label="分類" interface="popover" id="categorySelect">
-                    <ion-select-option value="">全部</ion-select-option>
-                    <ion-select-option value="網頁瀏覽器">網頁瀏覽器</ion-select-option>
-                    <ion-select-option value="作業系統">作業系統</ion-select-option>
-                    <ion-select-option value="辦公室軟體">辦公室軟體</ion-select-option>
-                    <ion-select-option value="圖像編輯器">圖像編輯器</ion-select-option>
-                    <ion-select-option value="版本控制">版本控制</ion-select-option>
-                </ion-select>
+              <ion-select label="排序方式" id="sortSelect" interface="popover" value="name">
+                <ion-select-option value="name">名稱</ion-select-option>
+                <ion-select-option value="version">版本</ion-select-option>
+              </ion-select>
             </ion-item>
-        </ion-header>
+          
+            <!-- 分類篩選 -->
+            <ion-item>
+              <ion-select label="分類" interface="popover" id="categorySelect" multiple="true">
+                <ion-select-option value="">全部</ion-select-option>
+                <ion-select-option value="網頁瀏覽器">網頁瀏覽器</ion-select-option>
+                <ion-select-option value="作業系統">作業系統</ion-select-option>
+                <ion-select-option value="辦公室軟體">辦公室軟體</ion-select-option>
+                <ion-select-option value="圖像編輯器">圖像編輯器</ion-select-option>
+                <ion-select-option value="版本控制">版本控制</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-header>
+          
         <ion-content>
             <div id="softwareListContainer">
                 <div class="software-item" data-category="網頁瀏覽器">
@@ -160,63 +173,74 @@
             </div>
         </ion-content>
     </ion-app>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const searchInput = document.getElementById('searchInput');
-            const softwareListContainer = document.getElementById('softwareListContainer');
+            const softwareItems = Array.from(document.querySelectorAll('.software-item'));
             const categorySelect = document.getElementById('categorySelect');
-            const softwareItems = document.querySelectorAll('.software-item');
-
-            // 實作搜尋功能
-            searchInput.addEventListener('input', (event) => {
-                const searchTerm = event.target.value.toLowerCase();
-                softwareItems.forEach(item => {
-                    const titleElement = item.querySelector('.software-details h2');
-                    const descriptionElement = item.querySelector('.software-details p:nth-child(3)');
-
-                    const title = titleElement ? titleElement.textContent.toLowerCase() : '';
-                    const description = descriptionElement ? descriptionElement.textContent.toLowerCase() : '';
-
-                    if (title.includes(searchTerm) || description.includes(searchTerm)) {
-                        item.classList.remove('hidden');
-                    } else {
-                        item.classList.add('hidden');
-                    }
-                });
-            });
-
-            // 實作分類過濾
-            categorySelect.addEventListener('ionChange', (event) => {
-                const selectedCategory = event.detail.value;
-                softwareItems.forEach(item => {
+            const sortSelect = document.getElementById('sortSelect');
+        
+            function parseVersion(text) {
+                const match = text.match(/[\d\.]+/);
+                return match ? match[0] : '';
+            }
+        
+            function applyFilters() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedCategories = categorySelect.value || [];
+                const sortBy = sortSelect.value;
+        
+                let filtered = softwareItems.filter(item => {
+                    const title = item.querySelector('.software-details h2')?.textContent.toLowerCase() || '';
+                    const description = item.querySelector('.software-details p:nth-child(3)')?.textContent.toLowerCase() || '';
                     const category = item.dataset.category;
-                    if (selectedCategory === '' || category === selectedCategory) {
-                        item.classList.remove('hidden');
-                    } else {
-                        item.classList.add('hidden');
-                    }
+        
+                    const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+                    const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(category);
+                    return matchesSearch && matchesCategory;
                 });
-            });
-
-            // 點擊類別標籤快速過濾
+        
+                // 排序
+                if (sortBy === 'name') {
+                    filtered.sort((a, b) => {
+                        const nameA = a.querySelector('h2')?.textContent.toLowerCase() || '';
+                        const nameB = b.querySelector('h2')?.textContent.toLowerCase() || '';
+                        return nameA.localeCompare(nameB);
+                    });
+                } else if (sortBy === 'version') {
+                    filtered.sort((a, b) => {
+                        const verA = parseVersion(a.querySelector('p')?.textContent || '');
+                        const verB = parseVersion(b.querySelector('p')?.textContent || '');
+                        return verB.localeCompare(verA, undefined, { numeric: true });
+                    });
+                }
+        
+                // 顯示/隱藏 & 依排序重組
+                const container = document.getElementById('softwareListContainer');
+                softwareItems.forEach(item => item.classList.add('hidden'));
+                filtered.forEach(item => {
+                    item.classList.remove('hidden');
+                    container.appendChild(item);
+                });
+            }
+        
+            // 綁定事件
+            searchInput.addEventListener('input', applyFilters);
+            categorySelect.addEventListener('ionChange', applyFilters);
+            sortSelect.addEventListener('ionChange', applyFilters);
+        
+            // 點擊分類標籤快速過濾（選中那一個分類）
             const categoryTags = document.querySelectorAll('.category-tag');
             categoryTags.forEach(tag => {
                 tag.addEventListener('click', (event) => {
                     const category = event.target.textContent;
-                    categorySelect.value = category; // 同步更新下拉選單
-                    softwareItems.forEach(item => {
-                        const itemCategory = item.dataset.category;
-                        if (category === itemCategory) {
-                            item.classList.remove('hidden');
-                        } else {
-                            item.classList.add('hidden');
-                        }
-                    });
+                    categorySelect.value = [category];
+                    categorySelect.dispatchEvent(new CustomEvent('ionChange', {
+                        detail: { value: [category] }
+                    }));
                 });
             });
         });
-    </script>
-
+        </script>
 </body>
 </html>
