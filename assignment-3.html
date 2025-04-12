@@ -63,12 +63,20 @@
         }
         .video-container {
             margin-top: 8px;
+            position: relative;
         }
         .video-container iframe {
             width: 100%;
             max-width: 343px;
             height: 150px;
             border: none;
+        }
+        .video-error {
+            padding: 8px;
+            text-align: center;
+        }
+        .video-error p {
+            margin: 0;
         }
         .no-results {
             text-align: center;
@@ -107,7 +115,12 @@
                 font-size: 11px;
             }
             .video-container iframe {
+                max-width: 100%;
                 height: 140px;
+            }
+            .video-error {
+                font-size: 11px;
+                padding: 6px;
             }
             .category-tag {
                 padding: 2px 4px;
@@ -171,6 +184,7 @@
                 category: "網頁瀏覽器",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Firefox_logo_2017.svg/800px-Firefox_logo_2017.svg.png",
                 video: "https://www.youtube.com/embed/agboT1w_e4g",
+                description: "Mozilla Firefox 是一款快速、安全的開源網頁瀏覽器，支持眾多擴充功能。",
                 date: "2025-04-01"
             },
             {
@@ -180,6 +194,7 @@
                 category: "作業系統",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/800px-Tux.svg.png",
                 video: "https://www.youtube.com/embed/mS4Ci-zZ9A4",
+                description: "Ubuntu 是基於 Linux 的開源作業系統，適合桌面和伺服器使用。",
                 date: "2025-04-15"
             },
             {
@@ -189,6 +204,7 @@
                 category: "辦公室軟體",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/LibreOffice_logo.svg/800px-LibreOffice_logo.svg.png",
                 video: "https://www.youtube.com/embed/nF0-612j61I",
+                description: "LibreOffice 是一套免費的開源辦公軟體，包含文書、試算表等工具。",
                 date: "2025-03-10"
             },
             {
@@ -198,6 +214,7 @@
                 category: "圖像編輯器",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/GIMP_logo.svg/800px-GIMP_logo.svg.png",
                 video: "https://www.youtube.com/embed/9ylj97R3R7s",
+                description: "GIMP 是一款功能強大的開源圖像編輯軟體，類似 Photoshop。",
                 date: "2025-02-20"
             },
             {
@@ -207,6 +224,7 @@
                 category: "版本控制",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Git-logo.svg/800px-Git-logo.svg.png",
                 video: "https://www.youtube.com/embed/qw--VYLhZUE",
+                description: "Git 是一款分散式版本控制系統，廣泛用於程式碼管理。",
                 date: "2025-04-05"
             },
             {
@@ -216,6 +234,7 @@
                 category: "程式設計工具",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/800px-Visual_Studio_Code_1.35_icon.svg.png",
                 video: "https://www.youtube.com/embed/KMxo3T_MTvY",
+                description: "VS Code 是一款輕量、強大的開源程式碼編輯器。",
                 date: "2025-03-15"
             },
             {
@@ -225,6 +244,7 @@
                 category: "資料庫",
                 icon: "https://upload.wikimedia.org/wikipedia/en/thumb/5/5a/MySQL.svg/800px-MySQL.svg.png",
                 video: "https://www.youtube.com/embed/OM4aZJW_Ojs",
+                description: "MySQL 是一款高效的開源關聯式資料庫管理系統。",
                 date: "2025-01-10"
             },
             {
@@ -234,6 +254,7 @@
                 category: "媒體播放器",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/VLC_media_player_Logo.svg/800px-VLC_media_player_Logo.svg.png",
                 video: "https://www.youtube.com/embed/FhX4F61KHDA",
+                description: "VLC 是一款支援多格式的開源媒體播放器。",
                 date: "2025-02-15"
             },
             {
@@ -243,6 +264,7 @@
                 category: "圖像編輯器",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Inkscape_logo.svg/800px-Inkscape_logo.svg.png",
                 video: "https://www.youtube.com/embed/7N0O4KH6ToU",
+                description: "Inkscape 是一款用於向量圖形的開源編輯工具。",
                 date: "2025-03-01"
             },
             {
@@ -251,7 +273,8 @@
                 license: "Apache License 2.0",
                 category: "網頁伺服器",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Apache_HTTP_server_logo_%282016%29.svg/800px-Apache_HTTP_server_logo_%282016%29.svg.png",
-                video: "https://www.youtube.com/embed/9ylj97R3R7s",
+                video: "https://www.youtube.com/embed/ZF7iY8pTXcg",
+                description: "Apache 是全球廣泛使用的開源網頁伺服器軟體。",
                 date: "2025-04-10"
             },
             {
@@ -260,7 +283,8 @@
                 license: "Eclipse Public License 2.0",
                 category: "程式設計工具",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Logo_Eclipse.svg/800px-Logo_Eclipse.svg.png",
-                video: "https://www.youtube.com/embed/9ylj97R3R7s",
+                video: "https://www.youtube.com/embed/UCHM5hnX3Z8",
+                description: "Eclipse 是一款開源的整合開發環境，適合 Java 開發。",
                 date: "2025-02-10"
             },
             {
@@ -269,7 +293,8 @@
                 license: "PostgreSQL License",
                 category: "資料庫",
                 icon: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7c/PostgreSQL_logo.svg/800px-PostgreSQL_logo.svg.png",
-                video: "https://www.youtube.com/embed/9ylj97R3R7s",
+                video: "https://www.youtube.com/embed/UxS7Mak7l8U",
+                description: "PostgreSQL 是一款強大的開源物件關聯式資料庫。",
                 date: "2025-03-20"
             },
             {
@@ -278,7 +303,8 @@
                 license: "GNU Lesser General Public License",
                 category: "檔案管理",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/7-Zip_Logo.svg/800px-7-Zip_Logo.svg.png",
-                video: "https://www.youtube.com/embed/9ylj97R3R7s",
+                video: "https://www.youtube.com/embed/U1yA2i-xL6Q",
+                description: "7-Zip 是一款高效的開源檔案壓縮工具。",
                 date: "2025-01-15"
             },
             {
@@ -287,7 +313,8 @@
                 license: "BSD License",
                 category: "網頁瀏覽器",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Chromium_Logo.svg/800px-Chromium_Logo.svg.png",
-                video: "https://www.youtube.com/embed/9ylj97R3R7s",
+                video: "https://www.youtube.com/embed/2k4I1v6m5pQ",
+                description: "Chromium 是 Chrome 的開源基礎，注重隱私和性能。",
                 date: "2025-04-03"
             },
             {
@@ -296,7 +323,8 @@
                 license: "GNU General Public License",
                 category: "作業系統",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Debian_logo.svg/800px-Debian_logo.svg.png",
-                video: "https://www.youtube.com/embed/9ylj97R3R7s",
+                video: "https://www.youtube.com/embed/YuD3jP7YvAc",
+                description: "Debian 是一款穩定、靈活的開源 Linux 發行版。",
                 date: "2025-02-25"
             },
             {
@@ -306,6 +334,7 @@
                 category: "程式設計工具",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Node.js_logo.svg/800px-Node.js_logo.svg.png",
                 video: "https://www.youtube.com/embed/TlB_eWDSMt4",
+                description: "Node.js 是基於 JavaScript 的開源伺服器執行環境。",
                 date: "2025-04-12"
             },
             {
@@ -314,7 +343,8 @@
                 license: "GNU General Public License v2.0",
                 category: "媒體播放器",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Audacity_Logo.svg/800px-Audacity_Logo.svg.png",
-                video: "https://www.youtube.com/embed/9ylj97R3R7s",
+                video: "https://www.youtube.com/embed/0gO0Ez4vMUI",
+                description: "Audacity 是一款開源的音訊編輯和錄製軟體。",
                 date: "2025-03-05"
             },
             {
@@ -323,7 +353,8 @@
                 license: "GNU General Public License v2.0",
                 category: "檔案管理",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/FileZilla_Logo.svg/800px-FileZilla_Logo.svg.png",
-                video: "https://www.youtube.com/embed/9ylj97R3R7s",
+                video: "https://www.youtube.com/embed/2oqXRVwH_ao",
+                description: "FileZilla 是一款開源的 FTP 檔案傳輸工具。",
                 date: "2025-02-05"
             },
             {
@@ -332,7 +363,8 @@
                 license: "BSD License",
                 category: "網頁伺服器",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Nginx_logo.svg/800px-Nginx_logo.svg.png",
-                video: "https://www.youtube.com/embed/9ylj97R3R7s",
+                video: "https://www.youtube.com/embed/1iZMgQPUmWo",
+                description: "NGINX 是一款高效的開源網頁伺服器和反向代理。",
                 date: "2025-01-20"
             },
             {
@@ -341,7 +373,8 @@
                 license: "Apache License 2.0",
                 category: "辦公室軟體",
                 icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/OpenOffice_logo.svg/800px-OpenOffice_logo.svg.png",
-                video: "https://www.youtube.com/embed/9ylj97R3R7s",
+                video: "https://www.youtube.com/embed/5dOnaa6vY00",
+                description: "Apache OpenOffice 是一套開源辦公軟體，支援多種文件格式。",
                 date: "2025-04-08"
             }
         ];
@@ -372,14 +405,44 @@
                             <ion-note><span class="detail-label">用途：</span><span class="category-tag">${data.category}</span></ion-note>
                         </div>
                     </div>
-                    <div class="video-container">
-                        <iframe src="${data.video}" title="${data.name} 示範影片" frameborder="0" allowfullscreen></iframe>
+                    <div class="video-container" data-video="${data.video}">
+                        <iframe data-src="${data.video}" title="${data.name} 示範影片" frameborder="0" allowfullscreen></iframe>
+                        <div class="video-error" style="display: none;">
+                            <p style="color: red; font-size: 12px;">影片無法播放，請稍後重試</p>
+                            <p style="font-size: 12px;">${data.description}</p>
+                        </div>
                     </div>
                 `;
                 return item;
             }
 
             const softwareItems = softwareData.map(data => createSoftwareItem(data));
+
+            // 延遲載入影片
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const iframe = entry.target.querySelector('iframe');
+                        const errorDiv = entry.target.querySelector('.video-error');
+                        iframe.src = iframe.dataset.src;
+                        iframe.onerror = () => {
+                            iframe.style.display = 'none';
+                            errorDiv.style.display = 'block';
+                        };
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { rootMargin: '0px 0px 100px 0px' });
+
+            // 綁定觀察
+            function bindObservers() {
+                container.querySelectorAll('.video-container').forEach(container => {
+                    const iframe = container.querySelector('iframe');
+                    if (iframe && !iframe.src) {
+                        observer.observe(container);
+                    }
+                });
+            }
 
             // 綁定標籤事件
             function bindTagEvents() {
@@ -435,10 +498,11 @@
                 let filtered = softwareItems.filter(item => {
                     const title = item.querySelector('ion-label').textContent.toLowerCase();
                     const desc = item.querySelector('ion-note:nth-child(3)').textContent.toLowerCase();
+                    const videoDesc = item.querySelector('.video-error p:nth-child(2)')?.textContent.toLowerCase() || '';
                     const category = item.dataset.category;
                     const itemDate = parseDate(item.dataset.date);
 
-                    const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm);
+                    const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm) || videoDesc.includes(searchTerm);
                     const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(category);
                     const matchesTags = activeTags.length === 0 || activeTags.includes(category);
                     const matchesDate = (!startDate || (itemDate && itemDate >= startDate)) &&
@@ -471,6 +535,7 @@
                 } else {
                     filtered.forEach(item => container.appendChild(item));
                     bindTagEvents();
+                    bindObservers();
                 }
             }
 
@@ -484,6 +549,7 @@
 
             // 初始化
             applyFilters();
+            bindObservers();
         });
     </script>
 </body>
