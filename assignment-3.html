@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="1.2">
+    <meta name="version" content="1.3">
     <title>開源軟體清單</title>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core@7.8.0/dist/ionic/ionic.esm.js"></script>
     <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core@7.8.0/dist/ionic/ionic.js"></script>
@@ -27,6 +27,16 @@
             margin-right: 8px;
             border-radius: 5px;
             object-fit: contain;
+        }
+        .favorite-icon {
+            font-size: 24px;
+            cursor: pointer;
+            margin-left: 8px;
+            transition: transform 0.3s;
+        }
+        .favorite-icon.favorited {
+            color: var(--ion-color-warning);
+            animation: scaleIcon 0.3s ease;
         }
         .software-details {
             flex-grow: 1;
@@ -108,8 +118,12 @@
             margin: 0;
             animation: slideIn 0.3s ease-out;
         }
-        ion-segment {
+        ion-segment, ion-button {
             margin: 8px;
+        }
+        mark {
+            background: #ffeb3b;
+            padding: 0 2px;
         }
         @keyframes slideIn {
             from { opacity: 0; transform: translateX(-16px); }
@@ -123,14 +137,19 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+        @keyframes scaleIcon {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
         @media (max-width: 375px) {
             ion-searchbar {
                 --padding-start: 8px;
                 --padding-end: 8px;
                 font-size: 14px;
             }
-            ion-segment, ion-select, ion-toggle {
-                font-size: 14px;
+            ion-segment, ion-select, ion-toggle, ion-button {
+                font-size: 12px;
             }
             ion-datetime-button {
                 --padding-end: 8px;
@@ -141,6 +160,9 @@
             .software-icon {
                 width: 36px;
                 height: 36px;
+            }
+            .favorite-icon {
+                font-size: 20px;
             }
             .software-details ion-card-title {
                 font-size: 13px;
@@ -193,6 +215,15 @@
                 <ion-title>開源軟體清單</ion-title>
             </ion-toolbar>
             <ion-searchbar id="searchInput" placeholder="搜尋..." debounce="300"></ion-searchbar>
+            <ion-item>
+                <ion-select label="搜尋欄位" id="searchFields" interface="popover" multiple="true">
+                    <ion-select-option value="name">名稱</ion-select-option>
+                    <ion-select-option value="version">版本</ion-select-option>
+                    <ion-select-option value="description">描述</ion-select-option>
+                    <ion-select-option value="tags">標籤</ion-select-option>
+                </ion-select>
+                <ion-toggle id="exactMatch" slot="end">精確搜尋</ion-toggle>
+            </ion-item>
             <ion-segment id="viewToggle" value="list">
                 <ion-segment-button value="list">
                     <ion-label>列表</ion-label>
@@ -211,6 +242,7 @@
             <ion-item>
                 <ion-select label="分類" interface="popover" id="categorySelect" multiple="true">
                     <ion-select-option value="">全部</ion-select-option>
+                    <ion-select-option value="favorites">收藏</ion-select-option>
                     <ion-select-option value="網頁瀏覽器">網頁瀏覽器</ion-select-option>
                     <ion-select-option value="作業系統">作業系統</ion-select-option>
                     <ion-select-option value="辦公室軟體">辦公室軟體</ion-select-option>
@@ -232,6 +264,7 @@
                 <ion-datetime id="startDate" presentation="date" max="2025-12-31"></ion-datetime>
                 <ion-datetime id="endDate" presentation="date" max="2025-12-31"></ion-datetime>
             </ion-modal>
+            <ion-button id="resetFilters" expand="block" color="light">重設過濾</ion-button>
         </ion-header>
         <ion-content class="ion-padding">
             <div class="chart-container">
@@ -480,12 +513,15 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const searchInput = document.getElementById('searchInput');
+            const searchFields = document.getElementById('searchFields');
+            const exactMatch = document.getElementById('exactMatch');
             const viewToggle = document.getElementById('viewToggle');
             const categorySelect = document.getElementById('categorySelect');
             const sortSelect = document.getElementById('sortSelect');
             const sortDirection = document.getElementById('sortDirection');
             const startDateInput = document.getElementById('startDate');
             const endDateInput = document.getElementById('endDate');
+            const resetFilters = document.getElementById('resetFilters');
             const container = document.getElementById('softwareListContainer');
             const chartCanvas = document.getElementById('categoryChart');
             const skeletonChart = document.querySelector('.skeleton-chart');
@@ -493,13 +529,16 @@
             let chartInstance = null;
             let activeTags = [];
             let activeCategoryTags = [];
+            let favorites = JSON.parse(localStorage.getItem('softwareFavorites')) || [];
             let isLoading = true;
 
             // 動態生成 ion-card
             function createSoftwareCard(data) {
+                const isFavorited = favorites.includes(data.name);
                 const card = document.createElement('ion-card');
                 card.dataset.category = data.category;
                 card.dataset.date = data.date;
+                card.dataset.name = data.name;
                 card.innerHTML = `
                     <ion-card-header>
                         <img src="${data.icon}" alt="${data.name} 圖示" class="software-icon">
@@ -508,6 +547,7 @@
                             <ion-card-subtitle>版本：${data.version}</ion-card-subtitle>
                             <ion-card-subtitle>授權：${data.license}</ion-card-subtitle>
                         </div>
+                        <ion-icon name="${isFavorited ? 'star' : 'star-outline'}" class="favorite-icon ${isFavorited ? 'favorited' : ''}"></ion-icon>
                     </ion-card-header>
                     <ion-card-content>
                         <p>描述：${data.description}</p>
@@ -553,7 +593,7 @@
                 });
             }
 
-            // 綁定標籤事件
+            // 綁定標籤和收藏事件
             function bindTagEvents() {
                 container.querySelectorAll('.category-tag').forEach(tag => {
                     tag.addEventListener('click', () => {
@@ -565,6 +605,7 @@
                             activeCategoryTags.push(category);
                             tag.classList.add('selected');
                         }
+                        saveFilters();
                         applyFilters();
                     });
                 });
@@ -578,6 +619,24 @@
                             activeTags.push(tagName);
                             tag.classList.add('selected');
                         }
+                        saveFilters();
+                        applyFilters();
+                    });
+                });
+                container.querySelectorAll('.favorite-icon').forEach(icon => {
+                    icon.addEventListener('click', () => {
+                        const card = icon.closest('ion-card');
+                        const name = card.dataset.name;
+                        if (favorites.includes(name)) {
+                            favorites = favorites.filter(f => f !== name);
+                            icon.name = 'star-outline';
+                            icon.classList.remove('favorited');
+                        } else {
+                            favorites.push(name);
+                            icon.name = 'star';
+                            icon.classList.add('favorited');
+                        }
+                        localStorage.setItem('softwareFavorites', JSON.stringify(favorites));
                         applyFilters();
                     });
                 });
@@ -654,9 +713,61 @@
                 return str ? new Date(str) : null;
             }
 
+            // 高亮搜尋
+            function highlightText(text, term, exact) {
+                if (!term) return text;
+                if (exact) {
+                    return text === term ? `<mark>${text}</mark>` : text;
+                }
+                const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                return text.replace(regex, '<mark>$1</mark>');
+            }
+
+            // 保存過濾設定
+            function saveFilters() {
+                const filters = {
+                    search: searchInput.value,
+                    searchFields: searchFields.value,
+                    exactMatch: exactMatch.checked,
+                    view: viewToggle.value,
+                    categories: categorySelect.value,
+                    sortBy: sortSelect.value,
+                    sortDirection: sortDirection.checked,
+                    startDate: startDateInput.value,
+                    endDate: endDateInput.value,
+                    activeCategoryTags,
+                    activeTags
+                };
+                localStorage.setItem('softwareFilters', JSON.stringify(filters));
+            }
+
+            // 載入過濾設定
+            function loadFilters() {
+                const filters = JSON.parse(localStorage.getItem('softwareFilters'));
+                if (filters) {
+                    searchInput.value = filters.search || '';
+                    searchFields.value = filters.searchFields || ['name', 'description', 'tags'];
+                    exactMatch.checked = filters.exactMatch || false;
+                    viewToggle.value = filters.view || 'list';
+                    categorySelect.value = filters.categories || [''];
+                    sortSelect.value = filters.sortBy || 'name';
+                    sortDirection.checked = filters.sortDirection !== undefined ? filters.sortDirection : true;
+                    startDateInput.value = filters.startDate || '';
+                    endDateInput.value = filters.endDate || '';
+                    activeCategoryTags = filters.activeCategoryTags || [];
+                    activeTags = filters.activeTags || [];
+                    container.classList.remove('list-view', 'grid-view');
+                    container.classList.add(`${viewToggle.value}-view`);
+                } else {
+                    searchFields.value = ['name', 'description', 'tags'];
+                }
+            }
+
             // 應用過濾與排序
             function applyFilters() {
                 const searchTerm = searchInput.value.toLowerCase();
+                const selectedFields = Array.isArray(searchFields.value) ? searchFields.value : [];
+                const isExact = exactMatch.checked;
                 const selectedCategories = Array.isArray(categorySelect.value) ? categorySelect.value.filter(v => v !== '') : [];
                 const sortBy = sortSelect.value;
                 const isDescending = sortDirection.checked;
@@ -664,19 +775,60 @@
                 const endDate = parseDate(endDateInput.value);
 
                 let filtered = softwareCards.filter(card => {
-                    const title = card.querySelector('ion-card-title').textContent.toLowerCase();
-                    const data = softwareData.find(d => d.name.toLowerCase() === title);
+                    const title = card.querySelector('ion-card-title').textContent;
+                    const data = softwareData.find(d => d.name === title);
+                    const name = data.name.toLowerCase();
+                    const version = data.version.toLowerCase();
                     const desc = data.description.toLowerCase();
                     const tags = data.tags.map(t => t.toLowerCase());
                     const category = card.dataset.category;
                     const itemDate = parseDate(card.dataset.date);
 
-                    const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm) || tags.some(tag => tag.includes(searchTerm));
-                    const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(category);
+                    let matchesSearch = true;
+                    if (searchTerm && selectedFields.length > 0) {
+                        matchesSearch = selectedFields.some(field => {
+                            if (field === 'name') {
+                                return isExact ? name === searchTerm : name.includes(searchTerm);
+                            } else if (field === 'version') {
+                                return isExact ? version === searchTerm : version.includes(searchTerm);
+                            } else if (field === 'description') {
+                                return isExact ? desc === searchTerm : desc.includes(searchTerm);
+                            } else if (field === 'tags') {
+                                return tags.some(tag => isExact ? tag === searchTerm : tag.includes(searchTerm));
+                            }
+                            return false;
+                        });
+                    }
+
+                    const matchesCategory = selectedCategories.length === 0 || 
+                        selectedCategories.includes(category) || 
+                        (selectedCategories.includes('favorites') && favorites.includes(data.name));
                     const matchesCategoryTags = activeCategoryTags.length === 0 || activeCategoryTags.includes(category);
                     const matchesTags = activeTags.length === 0 || tags.some(tag => activeTags.includes(tag));
                     const matchesDate = (!startDate || (itemDate && itemDate >= startDate)) &&
                                        (!endDate || (itemDate && itemDate <= endDate));
+
+                    if (matchesSearch && searchTerm && selectedFields.length > 0) {
+                        if (selectedFields.includes('name')) {
+                            card.querySelector('ion-card-title').innerHTML = highlightText(data.name, searchTerm, isExact);
+                        }
+                        if (selectedFields.includes('description')) {
+                            card.querySelector('ion-card-content p:first-child').innerHTML = `描述：${highlightText(data.description, searchTerm, isExact)}`;
+                        }
+                        if (selectedFields.includes('tags')) {
+                            const tagEls = card.querySelectorAll('.tag');
+                            tagEls.forEach((el, i) => {
+                                el.innerHTML = highlightText(data.tags[i], searchTerm, isExact);
+                            });
+                        }
+                    } else {
+                        card.querySelector('ion-card-title').innerHTML = data.name;
+                        card.querySelector('ion-card-content p:first-child').innerHTML = `描述：${data.description}`;
+                        const tagEls = card.querySelectorAll('.tag');
+                        tagEls.forEach((el, i) => {
+                            el.innerHTML = data.tags[i];
+                        });
+                    }
 
                     return matchesSearch && matchesCategory && matchesCategoryTags && matchesTags && matchesDate;
                 });
@@ -710,6 +862,8 @@
                     updateChart(filtered);
                     setTimeout(() => container.classList.remove('fade-toggle'), 200);
                 }
+
+                saveFilters();
             }
 
             // 視圖切換
@@ -719,17 +873,40 @@
                 container.classList.add('fade-toggle');
                 applyFilters();
                 setTimeout(() => container.classList.remove('fade-toggle'), 200);
+                saveFilters();
+            });
+
+            // 重設過濾
+            resetFilters.addEventListener('click', () => {
+                localStorage.removeItem('softwareFilters');
+                searchInput.value = '';
+                searchFields.value = ['name', 'description', 'tags'];
+                exactMatch.checked = false;
+                viewToggle.value = 'list';
+                categorySelect.value = [''];
+                sortSelect.value = 'name';
+                sortDirection.checked = true;
+                startDateInput.value = '';
+                endDateInput.value = '';
+                activeCategoryTags = [];
+                activeTags = [];
+                container.classList.remove('list-view', 'grid-view');
+                container.classList.add('list-view');
+                applyFilters();
             });
 
             // 綁定事件
             searchInput.addEventListener('ionInput', applyFilters);
+            searchFields.addEventListener('ionChange', applyFilters);
+            exactMatch.addEventListener('ionChange', applyFilters);
             categorySelect.addEventListener('ionChange', applyFilters);
             sortSelect.addEventListener('ionChange', applyFilters);
             sortDirection.addEventListener('ionChange', applyFilters);
             startDateInput.addEventListener('ionChange', applyFilters);
             endDateInput.addEventListener('ionChange', applyFilters);
 
-            // 初始化載入
+            // 初始化
+            loadFilters();
             setTimeout(() => {
                 isLoading = false;
                 container.innerHTML = '';
