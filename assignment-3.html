@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,57 +9,117 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
     <style>
         ion-item {
-            --inner-padding-end: 10px;
-        }
-        ion-avatar {
-            margin-right: 10px;
+            --inner-padding-end: 8px;
+            --padding-start: 8px;
         }
         .video-container {
-            margin-top: 10px;
+            margin-top: 8px;
         }
         .video-container iframe {
             width: 100%;
-            max-width: 560px;
-            height: 315px;
+            max-width: 343px; /* 375 - 16px * 2 邊距 */
+            height: 180px; /* 16:9 比例，343 * 9/16 ≈ 180 */
             border: none;
-        }
-        /* 簡易響應式設計 */
-        @media (max-width: 600px) {
-            .video-container iframe {
-                height: 200px;
-            }
         }
         .software-item {
             border: 1px solid #ccc;
-            margin-bottom: 20px;
-            padding: 15px;
+            margin-bottom: 12px;
+            padding: 12px;
             border-radius: 5px;
+            animation: fadeIn 0.3s ease-in;
         }
         .item-header {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .software-icon {
-            width: 80px;
-            height: 80px;
-            margin-right: 15px;
+            width: 60px;
+            height: 60px;
+            margin-right: 12px;
             border-radius: 5px;
-            object-fit: contain; /* 確保圖片完整顯示在容器內 */
+            object-fit: contain;
         }
         .software-details {
             flex-grow: 1;
         }
+        .software-details h2 {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+        .software-details p {
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 4px;
+        }
         .detail-label {
             font-weight: bold;
-            margin-right: 5px;
+            margin-right: 4px;
         }
         .category-tag {
             color: var(--ion-color-primary);
             cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            display: inline-block;
+            min-width: 44px; /* 確保觸控目標大小 */
+            text-align: center;
         }
-        .hidden {
-            display: none !important;
+        .category-tag.selected {
+            background-color: var(--ion-color-primary);
+            color: white;
+        }
+        .no-results {
+            text-align: center;
+            padding: 16px;
+            color: #888;
+            font-size: 14px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* 針對 375px 寬度優化 */
+        @media (max-width: 375px) {
+            ion-searchbar {
+                --padding-start: 8px;
+                --padding-end: 8px;
+                font-size: 14px;
+            }
+            ion-select, ion-toggle {
+                font-size: 14px;
+            }
+            ion-datetime-button {
+                --padding-end: 8px;
+            }
+            .software-item {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            .software-icon {
+                width: 50px;
+                height: 50px;
+                margin-right: 10px;
+            }
+            .software-details h2 {
+                font-size: 16px;
+            }
+            .software-details p {
+                font-size: 13px;
+            }
+            .video-container iframe {
+                height: 160px; /* 進一步縮小，適配 375px */
+            }
+            .category-tag {
+                padding: 3px 6px;
+                font-size: 13px;
+            }
+        }
+        /* 確保鍵盤彈出時內容可滾動 */
+        ion-content {
+            --padding-bottom: 120px; /* 留空間給虛擬鍵盤 */
         }
     </style>
 </head>
@@ -67,107 +127,106 @@
     <ion-app>
         <ion-header>
             <ion-toolbar>
-              <ion-title>開源軟體清單</ion-title>
+                <ion-title>開源軟體清單</ion-title>
             </ion-toolbar>
-          
-            <!-- 搜尋列 -->
-            <ion-searchbar id="searchInput" placeholder="搜尋..."></ion-searchbar>
-          
-            <!-- 🔽 新增：排序選單 -->
+            <ion-searchbar id="searchInput" placeholder="搜尋..." debounce="300"></ion-searchbar>
             <ion-item>
-              <ion-select label="排序方式" id="sortSelect" interface="popover" value="name">
-                <ion-select-option value="name">名稱</ion-select-option>
-                <ion-select-option value="version">版本</ion-select-option>
-              </ion-select>
+                <ion-select label="排序方式" id="sortSelect" interface="popover" value="name">
+                    <ion-select-option value="name">名稱</ion-select-option>
+                    <ion-select-option value="version">版本</ion-select-option>
+                </ion-select>
+                <ion-toggle id="sortDirection" slot="end" checked>降冪</ion-toggle>
             </ion-item>
-          
-            <!-- 分類篩選 -->
             <ion-item>
-              <ion-select label="分類" interface="popover" id="categorySelect" multiple="true">
-                <ion-select-option value="">全部</ion-select-option>
-                <ion-select-option value="網頁瀏覽器">網頁瀏覽器</ion-select-option>
-                <ion-select-option value="作業系統">作業系統</ion-select-option>
-                <ion-select-option value="辦公室軟體">辦公室軟體</ion-select-option>
-                <ion-select-option value="圖像編輯器">圖像編輯器</ion-select-option>
-                <ion-select-option value="版本控制">版本控制</ion-select-option>
-              </ion-select>
+                <ion-select label="分類" interface="popover" id="categorySelect" multiple="true">
+                    <ion-select-option value="">全部</ion-select-option>
+                    <ion-select-option value="網頁瀏覽器">網頁瀏覽器</ion-select-option>
+                    <ion-select-option value="作業系統">作業系統</ion-select-option>
+                    <ion-select-option value="辦公室軟體">辦公室軟體</ion-select-option>
+                    <ion-select-option value="圖像編輯器">圖像編輯器</ion-select-option>
+                    <ion-select-option value="版本控制">版本控制</ion-select-option>
+                </ion-select>
             </ion-item>
-          </ion-header>
-          
-        <ion-content>
+            <ion-item>
+                <ion-label>日期範圍</ion-label>
+                <ion-datetime-button datetime="startDate"></ion-datetime-button>
+                <ion-datetime-button datetime="endDate"></ion-datetime-button>
+            </ion-item>
+            <ion-modal>
+                <ion-datetime id="startDate" presentation="date" max="2025-12-31"></ion-datetime>
+                <ion-datetime id="endDate" presentation="date" max="2025-12-31"></ion-datetime>
+            </ion-modal>
+        </ion-header>
+        <ion-content class="ion-padding">
             <div id="softwareListContainer">
-                <div class="software-item" data-category="網頁瀏覽器">
+                <div class="software-item" data-category="網頁瀏覽器" data-date="2025-04-01">
                     <div class="item-header">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Firefox_logo_2017.svg/800px-Firefox_logo_2017.svg.png" alt="Mozilla Firefox 圖示" class="software-icon" width="80" height="80">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Firefox_logo_2017.svg/800px-Firefox_logo_2017.svg.png" alt="Mozilla Firefox 圖示" class="software-icon">
                         <div class="software-details">
                             <h2>Mozilla Firefox</h2>
                             <p><span class="detail-label">版本：</span>125.0.1 (截至 2025 年 4 月)</p>
                             <p><span class="detail-label">授權條款：</span>Mozilla Public License 2.0</p>
-                            <p><span class="detail-label">用途：</span><span class="category-tag">網頁瀏覽器</span>，用於存取和瀏覽全球資訊網上的內容。</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">網頁瀏覽器</span></p>
                         </div>
                     </div>
                     <div class="video-container">
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/agboT1w_e4g" title="Mozilla Firefox 示範影片" frameborder="0" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/agboT1w_e4g" title="Mozilla Firefox 示範影片" frameborder="0" allowfullscreen></iframe>
                     </div>
                 </div>
-
-                <div class="software-item" data-category="作業系統">
+                <div class="software-item" data-category="作業系統" data-date="2025-04-15">
                     <div class="item-header">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/800px-Tux.svg.png" alt="Linux (Ubuntu) 圖示" class="software-icon" width="80" height="80">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/800px-Tux.svg.png" alt="Linux (Ubuntu) 圖示" class="software-icon">
                         <div class="software-details">
                             <h2>Linux (Ubuntu)</h2>
-                            <p><span class="detail-label">版本：</span>24.04 LTS (Noble Numbat) (截至 2025 年 4 月)</p>
+                            <p><span class="detail-label">版本：</span>24.04 LTS (截至 2025 年 4 月)</p>
                             <p><span class="detail-label">授權條款：</span>GNU General Public License (GPL)</p>
-                            <p><span class="detail-label">用途：</span><span class="category-tag">作業系統</span>，提供電腦硬體和軟體資源的管理，並為應用程式提供執行環境。</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">作業系統</span></p>
                         </div>
                     </div>
                     <div class="video-container">
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/mS4Ci-zZ9A4" title="Ubuntu 24.04 LTS 示範影片" frameborder="0" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/mS4Ci-zZ9A4" title="Ubuntu 24.04 LTS 示範影片" frameborder="0" allowfullscreen></iframe>
                     </div>
                 </div>
-
-                <div class="software-item" data-category="辦公室軟體">
+                <div class="software-item" data-category="辦公室軟體" data-date="2025-03-10">
                     <div class="item-header">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/LibreOffice_logo.svg/800px-LibreOffice_logo.svg.png" alt="LibreOffice 圖示" class="software-icon" width="80" height="80">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/LibreOffice_logo.svg/800px-LibreOffice_logo.svg.png" alt="LibreOffice 圖示" class="software-icon">
                         <div class="software-details">
                             <h2>LibreOffice</h2>
                             <p><span class="detail-label">版本：</span>24.2.3 (截至 2025 年 4 月)</p>
                             <p><span class="detail-label">授權條款：</span>Mozilla Public License v2.0</p>
-                            <p><span class="detail-label">用途：</span><span class="category-tag">辦公室軟體</span>，包含文書處理、試算表、簡報、資料庫和繪圖等應用程式。</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">辦公室軟體</span></p>
                         </div>
                     </div>
                     <div class="video-container">
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/nF0-612j61I" title="LibreOffice 7.6 示範影片" frameborder="0" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/nF0-612j61I" title="LibreOffice 7.6 示範影片" frameborder="0" allowfullscreen></iframe>
                     </div>
                 </div>
-
-                <div class="software-item" data-category="圖像編輯器">
+                <div class="software-item" data-category="圖像編輯器" data-date="2025-02-20">
                     <div class="item-header">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/GIMP_logo.svg/800px-GIMP_logo.svg.png" alt="GIMP 圖示" class="software-icon" width="80" height="80">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/GIMP_logo.svg/800px-GIMP_logo.svg.png" alt="GIMP 圖示" class="software-icon">
                         <div class="software-details">
                             <h2>GIMP</h2>
                             <p><span class="detail-label">版本：</span>2.10.36 (截至 2025 年 4 月)</p>
                             <p><span class="detail-label">授權條款：</span>GNU General Public License v3.0</p>
-                            <p><span class="detail-label">用途：</span><span class="category-tag">圖像編輯器</span>，用於圖像修飾、合成和建立。</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">圖像編輯器</span></p>
                         </div>
                     </div>
                     <div class="video-container">
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/9ylj97R3R7s" title="GIMP 2.10 功能示範" frameborder="0" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/9ylj97R3R7s" title="GIMP 2.10 功能示範" frameborder="0" allowfullscreen></iframe>
                     </div>
                 </div>
-
-                <div class="software-item" data-category="版本控制">
+                <div class="software-item" data-category="版本控制" data-date="2025-04-05">
                     <div class="item-header">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Git-logo.svg/800px-Git-logo.svg.png" alt="Git 圖示" class="software-icon" width="80" height="80">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Git-logo.svg/800px-Git-logo.svg.png" alt="Git 圖示" class="software-icon">
                         <div class="software-details">
                             <h2>Git</h2>
                             <p><span class="detail-label">版本：</span>2.45.0 (截至 2025 年 4 月)</p>
                             <p><span class="detail-label">授權條款：</span>GNU General Public License v2.0</p>
-                            <p><span class="detail-label">用途：</span><span class="category-tag">版本控制</span>，分散式版本控制系統，用於追蹤程式碼的變更。</p>
+                            <p><span class="detail-label">用途：</span><span class="category-tag">版本控制</span></p>
                         </div>
                     </div>
                     <div class="video-container">
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/qw--VYLhZUE" title="Git 基礎示範" frameborder="0" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/qw--VYLhZUE" title="Git 基礎示範" frameborder="0" allowfullscreen></iframe>
                     </div>
                 </div>
             </div>
@@ -176,71 +235,118 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const searchInput = document.getElementById('searchInput');
-            const softwareItems = Array.from(document.querySelectorAll('.software-item'));
             const categorySelect = document.getElementById('categorySelect');
             const sortSelect = document.getElementById('sortSelect');
-        
-            function parseVersion(text) {
-                const match = text.match(/[\d\.]+/);
-                return match ? match[0] : '';
+            const sortDirection = document.getElementById('sortDirection');
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            const softwareItems = Array.from(document.querySelectorAll('.software-item'));
+            const container = document.getElementById('softwareListContainer');
+            const categoryTags = document.querySelectorAll('.category-tag');
+
+            let activeTags = [];
+
+            // 解析版本號
+            function parseVersion(str) {
+                const versionMatch = str.match(/[\d\.]+(?:\s*LTS)?/);
+                if (!versionMatch) return [0];
+                const version = versionMatch[0].replace(/\s*LTS/, '');
+                return version.split('.').map(Number);
             }
-        
+
+            // 比較版本號
+            function compareVersions(a, b) {
+                const aParts = parseVersion(a);
+                const bParts = parseVersion(b);
+                for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+                    const aVal = aParts[i] || 0;
+                    const bVal = bParts[i] || 0;
+                    if (aVal !== bVal) return aVal - bVal;
+                }
+                return 0;
+            }
+
+            // 解析日期
+            function parseDate(str) {
+                return str ? new Date(str) : null;
+            }
+
+            // 應用過濾與排序
             function applyFilters() {
                 const searchTerm = searchInput.value.toLowerCase();
-                const selectedCategories = categorySelect.value || [];
+                const selectedCategories = Array.isArray(categorySelect.value) ? categorySelect.value.filter(v => v !== '') : [];
                 const sortBy = sortSelect.value;
-        
+                const isDescending = sortDirection.checked;
+                const startDate = parseDate(startDateInput.value);
+                const endDate = parseDate(endDateInput.value);
+
                 let filtered = softwareItems.filter(item => {
-                    const title = item.querySelector('.software-details h2')?.textContent.toLowerCase() || '';
-                    const description = item.querySelector('.software-details p:nth-child(3)')?.textContent.toLowerCase() || '';
+                    const title = item.querySelector('h2')?.textContent.toLowerCase() || '';
+                    const desc = item.querySelector('.software-details p:nth-child(3)')?.textContent.toLowerCase() || '';
                     const category = item.dataset.category;
-        
-                    const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+                    const itemDate = parseDate(item.dataset.date);
+
+                    const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm);
                     const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(category);
-                    return matchesSearch && matchesCategory;
+                    const matchesTags = activeTags.length === 0 || activeTags.includes(category);
+                    const matchesDate = (!startDate || (itemDate && itemDate >= startDate)) &&
+                                       (!endDate || (itemDate && itemDate <= endDate));
+
+                    return matchesSearch && matchesCategory && matchesTags && matchesDate;
                 });
-        
+
                 // 排序
-                if (sortBy === 'name') {
-                    filtered.sort((a, b) => {
-                        const nameA = a.querySelector('h2')?.textContent.toLowerCase() || '';
-                        const nameB = b.querySelector('h2')?.textContent.toLowerCase() || '';
-                        return nameA.localeCompare(nameB);
-                    });
-                } else if (sortBy === 'version') {
-                    filtered.sort((a, b) => {
-                        const verA = parseVersion(a.querySelector('p')?.textContent || '');
-                        const verB = parseVersion(b.querySelector('p')?.textContent || '');
-                        return verB.localeCompare(verA, undefined, { numeric: true });
-                    });
-                }
-        
-                // 顯示/隱藏 & 依排序重組
-                const container = document.getElementById('softwareListContainer');
-                softwareItems.forEach(item => item.classList.add('hidden'));
-                filtered.forEach(item => {
-                    item.classList.remove('hidden');
-                    container.appendChild(item);
+                filtered.sort((a, b) => {
+                    let aVal, bVal;
+                    if (sortBy === 'name') {
+                        aVal = a.querySelector('h2').textContent.toLowerCase();
+                        bVal = b.querySelector('h2').textContent.toLowerCase();
+                        return aVal.localeCompare(bVal);
+                    } else if (sortBy === 'version') {
+                        aVal = a.querySelector('p').textContent || '';
+                        bVal = b.querySelector('p').textContent || '';
+                        return compareVersions(aVal, bVal);
+                    }
+                    return 0;
                 });
+
+                if (isDescending) filtered.reverse();
+
+                // 更新 DOM
+                container.innerHTML = '';
+                if (filtered.length === 0) {
+                    container.innerHTML = '<p class="no-results">無符合結果</p>';
+                } else {
+                    filtered.forEach(item => container.appendChild(item));
+                }
             }
-        
+
             // 綁定事件
-            searchInput.addEventListener('input', applyFilters);
+            searchInput.addEventListener('ionInput', applyFilters);
             categorySelect.addEventListener('ionChange', applyFilters);
             sortSelect.addEventListener('ionChange', applyFilters);
-        
-            // 點擊分類標籤快速過濾（選中那一個分類）
-            const categoryTags = document.querySelectorAll('.category-tag');
+            sortDirection.addEventListener('ionChange', applyFilters);
+            startDateInput.addEventListener('ionChange', applyFilters);
+            endDateInput.addEventListener('ionChange', applyFilters);
+
+            // 分類標籤點擊事件
             categoryTags.forEach(tag => {
-                tag.addEventListener('click', (event) => {
-                    const category = event.target.textContent;
-                    categorySelect.value = [category];
-                    categorySelect.dispatchEvent(new CustomEvent('ionChange', {
-                        detail: { value: [category] }
-                    }));
+                tag.addEventListener('click', () => {
+                    const category = tag.textContent;
+                    if (activeTags.includes(category)) {
+                        activeTags = activeTags.filter(t => t !== category);
+                        tag.classList.remove('selected');
+                    } else {
+                        activeTags.push(category);
+                        tag.classList.add('selected');
+                    }
+                    applyFilters();
                 });
             });
+
+            // 初始化
+            applyFilters();
         });
-        </script>
+    </script>
 </body>
 </html>
